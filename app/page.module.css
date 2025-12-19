@@ -1,0 +1,239 @@
+/* Main Horizontal Layout */
+.mainContainer {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--background);
+  display: flex;
+  flex-direction: row;
+  /* SideNav Left, Content Right */
+  position: relative;
+}
+
+/* Side Column (Title + Nav) - ABSOLUTE to guarantee clipping */
+.sideColumn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 100vh;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 120px 40px 60px 70px;
+  z-index: 100;
+  /* Ensure it stays on top */
+  background: #ffffff;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Massive Title */
+.bigTitle {
+  font-size: 80px;
+  /* Slightly reduced for narrower sidebar */
+  /* Fixed massive size */
+  /* Massive responsive text */
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+  margin-bottom: 40px;
+}
+
+.subTitle {
+  font-size: 24px;
+  /* Slightly smaller for better hierarchy */
+  font-weight: 800;
+  color: #7e72b2;
+  margin-top: -15px;
+  margin-bottom: 30px;
+  display: inline-block;
+  width: fit-content;
+  letter-spacing: -0.01em;
+  opacity: 0.9;
+}
+
+/* Right Content Column (Vertical Stack of Rows) */
+/* Right Content Column */
+.contentColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Prevent bleed from causing page-wide horizontal scroll */
+  padding: 120px 0 60px 240px;
+  /* SIDEBAR WIDTH - This is the clipping point */
+  gap: 60px;
+  height: 100vh;
+  min-width: 0;
+}
+
+/* Individual Row Wrapper */
+.rowSection {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.rowTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+  margin-bottom: -5px;
+  opacity: 0.8;
+  text-align: left;
+  padding-left: 250px;
+  /* 북카드 시작점과 동일하게 정렬 */
+}
+
+/* Horizontal Scroll Row */
+.scrollContainer {
+  position: relative;
+  width: 100%;
+}
+
+.scrollRow {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  padding-left: 250px;
+  padding-top: 40px;
+  width: calc(100% + 0px);
+  overflow-x: auto;
+  gap: 50px;
+  padding-bottom: 40px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(31, 3, 75, 0.2) transparent;
+  cursor: grab;
+  user-select: none;
+  scroll-behavior: smooth;
+  mask-image: linear-gradient(to right, transparent, black 250px, black calc(100% - 100px), transparent);
+}
+
+.scrollRow::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollRow::-webkit-scrollbar-track {
+  background: transparent;
+  margin-left: 250px;
+}
+
+.scrollRow::-webkit-scrollbar-thumb {
+  background: rgba(31, 3, 75, 0.1);
+  border-radius: 100px;
+  transition: background 0.3s ease;
+}
+
+.scrollRow:hover::-webkit-scrollbar-thumb {
+  background: rgba(31, 3, 75, 0.3);
+}
+
+.scrollButton {
+  position: absolute;
+  top: 45%;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: none;
+  cursor: pointer;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 39px;
+  color: var(--primary);
+  transition: all 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.8);
+}
+
+.scrollContainer:hover .scrollButton {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+
+.scrollButton:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.prevButton {
+  left: 220px;
+}
+
+.nextButton {
+  right: 40px;
+}
+
+.scrollRow.dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.scrollArea::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollSpacer {
+  /* Extra space at end */
+  min-width: 100px;
+}
+
+.sectionHeader {
+  display: none;
+  /* Hide standard headers in this mode, title area handles it */
+}
+
+/* Empty State */
+.emptyState {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--secondary);
+}
+
+/* Grid Layout for Search Results */
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 40px;
+  padding: 40px 250px 40px 250px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 그리드 내부의 카드는 100% 너비로 설정 */
+.gridContainer > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1600px) {
+  .gridContainer {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .gridContainer {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+    padding: 40px 200px 40px 200px;
+  }
+}
