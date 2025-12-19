@@ -26,6 +26,8 @@
     transition: all 0.3s ease;
     z-index: 20;
     font-family: system-ui, -apple-system, sans-serif;
+    animation: heartbeat 1.5s ease-in-out infinite;
+  
     /* Standard font for nice +/- */
 }
 
@@ -190,3 +192,16 @@
     color: #bbb;
     font-weight: 500;
 }
+
+@keyframes heartbeat {
+    0%   { transform: scale(1); }
+    14%  { transform: scale(1.15); }
+    28%  { transform: scale(1); }
+    42%  { transform: scale(1.15); }
+    70%  { transform: scale(1); }
+    100% { transform: scale(1); }
+  }
+  
+  .heartbeat {
+    animation: heartbeat 1.5s ease-in-out infinite;
+  }
