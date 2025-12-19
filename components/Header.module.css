@@ -1,0 +1,40 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 24px 40px;
+    background: transparent;
+}
+
+.inner {
+    display: flex;
+    justify-content: flex-end;
+    /* Align search to right */
+    align-items: center;
+}
+
+.logo {
+    display: none;
+    /* Hide logo as it's now in Sidebar */
+}
+
+.searchContainer {
+    position: relative;
+    width: 300px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 100px;
+    border: none;
+    background: white;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    outline: none;
+    transition: box-shadow 0.9s;
+}
+
+.searchInput:focus {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

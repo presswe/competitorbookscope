@@ -1,0 +1,115 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background: #bfbfbf;
+    /* Muted Grey Background from mock */
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px;
+    overflow: hidden;
+    box-shadow: 1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.open {
+    width: 300px;
+}
+
+.closed {
+    width: 80px;
+    padding: 40px 20px;
+}
+
+/* Content wrapper to handle fade/hide when closed */
+.content {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    width: 100%;
+}
+
+.closed .content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.branding {
+    margin-bottom: 60px;
+}
+
+.title {
+    font-size: 48px;
+    line-height: 1;
+    font-weight: 900;
+    color: #6b4c9a;
+    /* Deep Purple */
+    letter-spacing: -1px;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.navItem {
+    appearance: none;
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 100px;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #6b4c9a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    width: 100%;
+}
+
+.navItem:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+.navItem.active {
+    background: #6b4c9a;
+    color: white;
+    box-shadow: 0 4px 12px rgba(107, 76, 154, 0.3);
+}
+
+.toggleBtn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #6b4c9a;
+    color: white;
+    border: none;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+}
+
+.closed .toggleBtn {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.toggleBtn:hover {
+    background: #5a3d85;
+    transform: scale(1.1) translateX(0);
+    /* Reset translate for open state hover, or handle carefully? */
+}
+
+.closed .toggleBtn:hover {
+    transform: translateX(-50%) scale(1.1);
+}

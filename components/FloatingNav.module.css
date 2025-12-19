@@ -1,0 +1,121 @@
+.container {
+    position: fixed;
+    top: 40px;
+    /* Aligned with Title Padding */
+    right: 60px;
+    /* Aligned with Title Area Horizontal Padding */
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    /* Stack downwards from top */
+    align-items: flex-end;
+    gap: 16px;
+    pointer-events: none;
+    /* Let clicks pass through empty space */
+}
+
+/* Toggle Button */
+.toggleBtn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(107, 76, 154, 1);
+    color: white;
+    border: none;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
+    pointer-events: auto;
+    z-index: 202;
+}
+
+.toggleBtn:hover {
+    transform: scale(1.1);
+    background: rgba(90, 60, 130, 1);
+}
+
+.activeBtn {
+    transform: rotate(45deg);
+    /* Spin to X */
+    background: #333;
+}
+
+/* List Container */
+.list {
+    display: flex;
+    flex-direction: column;
+    /* Top items are visually higher (below button) */
+    align-items: flex-end;
+    gap: 12px;
+    padding-top: 8px;
+    /* Space between toggle and list */
+}
+
+/* Individual Pill Button */
+.item {
+    pointer-events: auto;
+    appearance: none;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6b4c9a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+
+    /* Genie Start State: Drop from Top Right */
+    transform-origin: top right;
+    opacity: 0;
+    transform: scale(0) translateY(-40px);
+    /* Start small and higher */
+}
+
+.item:hover {
+    background: rgb(219, 219, 219);
+    transform: scale(1.05) translateX(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.item.active {
+    background: #6b4c9a;
+    color: white;
+}
+
+/* Open State Animations */
+.open .item {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* Stagger Delays for Fan-out */
+.open .item:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.open .item:nth-child(2) {
+    transition-delay: 0.1s;
+}
+
+.open .item:nth-child(3) {
+    transition-delay: 0.15s;
+}
+
+.open .item:nth-child(4) {
+    transition-delay: 0.2s;
+}
+
+.open .item:nth-child(5) {
+    transition-delay: 0.25s;
+}
+
+.open .item:nth-child(6) {
+    transition-delay: 0.3s;
+}
