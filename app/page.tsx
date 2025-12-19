@@ -24,7 +24,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   if (query) {
     // 1. Search Mode
-    const searchResults = await fetchBooks('Keyword', 'Book', query, 20);
+    const searchResults = await fetchBooks('Publisher', 'Book', query, 20);
     rows = [{ title: `'${query}' 검색 결과`, books: searchResults }];
   } else if (publisher) {
     // 2. Specific Publisher Mode -> Split by School Level
