@@ -24,14 +24,14 @@ export default async function Home({ searchParams }: HomeProps) {
 
   if (query) {
     // 1. Search Mode
-    const searchResults = await fetchBooks('Publisher', 'Book', query, 20);
+    const searchResults = await fetchBooks('Publisher', query, 20);
     rows = [{ title: `'${query}' 검색 결과`, books: searchResults }];
   } else if (publisher) {
     // 2. Specific Publisher Mode -> Split by School Level
     const [elem, mid, high] = await Promise.all([
-      fetchBooks('Publisher', 'Book', publisher, 12, 1, 'PublishTime', 50246),
-      fetchBooks('Publisher', 'Book', publisher, 12, 1, 'PublishTime', 76000),
-      fetchBooks('Publisher', 'Book', publisher, 12, 1, 'PublishTime', 76001)
+      fetchBooks('Publisher', publisher, 12, 1, 'PublishTime', 50246),
+      fetchBooks('Publisher', publisher, 12, 1, 'PublishTime', 76000),
+      fetchBooks('Publisher', publisher, 12, 1, 'PublishTime', 76001)
     ]);
     rows = [
       { title: "초등 참고서 NEW", books: elem },
