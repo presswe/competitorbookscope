@@ -63,7 +63,7 @@ export default function Spotlight() {
                 height: isFocus ? '400px' : '400px',
                 borderRadius: '50%',
                 background: '#F7E08E',
-                transform: `translate(${spotlightPosition.x - (isFocus ? 200 : 150)}px, ${spotlightPosition.y - (isFocus ? 200 : 150)}px)`,
+                transform: `translate(${spotlightPosition.x - (isFocus ? 200 : 200)}px, ${spotlightPosition.y - (isFocus ? 200 : 200)}px)`,
                 pointerEvents: 'none',
                 zIndex: 9999,
                 mixBlendMode: 'overlay',
