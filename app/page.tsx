@@ -29,9 +29,9 @@ export default async function Home({ searchParams }: HomeProps) {
   } else if (publisher) {
     // 2. Specific Publisher Mode -> Split by School Level
     const [elem, mid, high] = await Promise.all([
-      fetchBooks('Keyword', 'Book', publisher, 12, 1, 'PublishTime', 50246),
-      fetchBooks('Keyword', 'Book', publisher, 12, 1, 'PublishTime', 76000),
-      fetchBooks('Keyword', 'Book', publisher, 12, 1, 'PublishTime', 76001)
+      fetchBooks('Publisher', 'Book', publisher, 12, 1, 'PublishTime', 50246),
+      fetchBooks('Publisher', 'Book', publisher, 12, 1, 'PublishTime', 76000),
+      fetchBooks('Publisher', 'Book', publisher, 12, 1, 'PublishTime', 76001)
     ]);
     rows = [
       { title: "초등 참고서 NEW", books: elem },
