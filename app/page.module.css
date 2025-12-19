@@ -205,3 +205,35 @@
   font-size: 24px;
   color: var(--secondary);
 }
+
+/* Grid Layout for Search Results */
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 40px;
+  padding: 40px 250px 40px 250px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 그리드 내부의 카드는 100% 너비로 설정 */
+.gridContainer > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1600px) {
+  .gridContainer {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .gridContainer {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+    padding: 40px 200px 40px 200px;
+  }
+}

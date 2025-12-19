@@ -20,18 +20,19 @@ export default async function Home({ searchParams }: HomeProps) {
     title: string;
     books: import("@/lib/aladin-client").AladinBook[];
     showRank?: boolean;
+    isSearch?: boolean;
   }> = [];
 
   if (query) {
-    // 1. Search Mode
-    const searchResults = await fetchBooks('Publisher', query, 20);
-    rows = [{ title: `'${query}' 검색 결과`, books: searchResults }];
+    // 1. Search Mode - 바둑판 형식
+    const searchResults = await fetchBooks('Keyword', 'Book', query, 50);
+    rows = [{ title: `'${query}' 검색 결과`, books: searchResults, isSearch: true }];
   } else if (publisher) {
     // 2. Specific Publisher Mode -> Split by School Level
     const [elem, mid, high] = await Promise.all([
-      fetchBooks('Publisher', 12, 1, 'PublishTime', 50246),
-      fetchBooks('Publisher', 12, 1, 'PublishTime', 76000),
-      fetchBooks('Publisher', 12, 1, 'PublishTime', 76001)
+      fetchBooks('Publisher', 'Book', publisher, 15, 1, 'PublishTime', 50246),
+      fetchBooks('Publisher', 'Book', publisher, 15, 1, 'PublishTime', 76000),
+      fetchBooks('Publisher', 'Book', publisher, 15, 1, 'PublishTime', 76001)
     ]);
     rows = [
       { title: "초등 참고서 NEW", books: elem },
@@ -40,16 +41,17 @@ export default async function Home({ searchParams }: HomeProps) {
     ];
   } else {
     // 3. Default "Integrated" Mode (7 Rows - 3 Weekly Best + 3 New Releases)
-    const [elemNew, midNew, highNew, elemBest, midBest, highBest] = await Promise.all([
+    // 타임아웃 방지를 위해 순차적으로 호출하거나 Promise.allSettled 사용
+    const [elemNew, midNew, highNew, elemBest, midBest, highBest] = await Promise.allSettled([
       // New Releases for each level
-      fetchBooks('ItemNewAll', 'Book', '', 12, 1, 'PublishTime', 50246),
-      fetchBooks('ItemNewAll', 'Book', '', 12, 1, 'PublishTime', 76000),
-      fetchBooks('ItemNewAll', 'Book', '', 12, 1, 'PublishTime', 76001),
+      fetchBooks('ItemNewAll', 'Book', '', 15, 1, 'PublishTime', 50246),
+      fetchBooks('ItemNewAll', 'Book', '', 15, 1, 'PublishTime', 76000),
+      fetchBooks('ItemNewAll', 'Book', '', 15, 1, 'PublishTime', 76001),
       // Weekly Best 10 for each level
       fetchBooks('Bestseller', 'Book', '', 10, 1, 'SalesPoint', 50246),
       fetchBooks('Bestseller', 'Book', '', 10, 1, 'SalesPoint', 76000),
       fetchBooks('Bestseller', 'Book', '', 10, 1, 'SalesPoint', 76001),
-    ]);
+    ]).then(results => results.map(r => r.status === 'fulfilled' ? r.value : []));
 
     rows = [
       { title: "초등 참고서 주간 BEST 10", books: elemBest, showRank: true },
