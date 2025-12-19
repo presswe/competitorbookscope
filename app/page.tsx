@@ -25,7 +25,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   if (query) {
     // 1. Search Mode - 바둑판 형식
-    const searchResults = await fetchBooks('Keyword', 'Book', query, 50);
+    const searchResults = await fetchBooks('Keyword', 'Book', query, 80);
     rows = [{ title: `'${query}' 검색 결과`, books: searchResults, isSearch: true }];
   } else if (publisher) {
     // 2. Specific Publisher Mode -> Split by School Level
