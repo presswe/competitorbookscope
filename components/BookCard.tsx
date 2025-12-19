@@ -6,9 +6,10 @@ import { AladinBook } from '@/lib/aladin-client';
 interface BookCardProps {
     book: AladinBook;
     rank?: number; // Optional rank override if needed
+    isInGrid?: boolean; // 그리드 레이아웃에서 사용되는지 여부
 }
 
-export default function BookCard({ book, rank }: BookCardProps) {
+export default function BookCard({ book, rank, isInGrid }: BookCardProps) {
     const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
         const card = e.currentTarget;
         const rect = card.getBoundingClientRect();
@@ -38,12 +39,13 @@ export default function BookCard({ book, rank }: BookCardProps) {
             href={book.link}
             target="_blank"
             rel="noopener noreferrer"
-            className={`${styles.card} ${rankClass}`}
+            className={`${styles.card} ${rankClass} ${isInGrid ? styles.cardInGrid : ''}`}
+            data-book-card="true"
             draggable="false"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
-            <div className={styles.coverContainer}>
+            <div className={styles.coverContainer} data-book-card="true">
                 {rank && rank <= 3 && (
                     <>
                         <div className={styles.rankBgNumber}>{rank}</div>

@@ -15,7 +15,16 @@ export default function Spotlight() {
             const target = e.target as HTMLElement;
 
             // Check if hovering over a BookCard for focus effect
-            const isCard = !!target.closest('[class*="BookCard_card"]');
+            // 북카드 또는 그 자식 요소 위에 있는지 확인 (부모 요소까지 모두 확인)
+            let element: HTMLElement | null = target as HTMLElement;
+            let isCard = false;
+            while (element && !isCard) {
+                if (element.hasAttribute('data-book-card')) {
+                    isCard = true;
+                    break;
+                }
+                element = element.parentElement;
+            }
             setIsFocus(isCard);
 
             // Check if inside the sideColumn
@@ -50,16 +59,16 @@ export default function Spotlight() {
                 position: 'fixed',
                 top: 0,
                 left: 0,
-                width: isFocus ? '500px' : '350px',
-                height: isFocus ? '500px' : '350px',
+                width: isFocus ? '400px' : '400px',
+                height: isFocus ? '400px' : '400px',
                 borderRadius: '50%',
                 background: '#F7E08E',
-                transform: `translate(${spotlightPosition.x - (isFocus ? 250 : 175)}px, ${spotlightPosition.y - (isFocus ? 250 : 175)}px)`,
+                transform: `translate(${spotlightPosition.x - (isFocus ? 200 : 150)}px, ${spotlightPosition.y - (isFocus ? 200 : 150)}px)`,
                 pointerEvents: 'none',
                 zIndex: 9999,
-                mixBlendMode: 'screen',
-                opacity: isHidden ? 0 : (isFocus ? 0.8 : 0.5),
-                transition: 'width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease',
+                mixBlendMode: 'overlay',
+                opacity: isHidden ? 0 : (isFocus ? 0.8 : 0),
+                transition: 'width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.7s ease',
             }}
         />
     );

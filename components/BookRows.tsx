@@ -10,13 +10,14 @@ interface BookRowData {
     title: string;
     books: AladinBook[];
     showRank?: boolean;
+    isSearch?: boolean;
 }
 
 interface BookRowsProps {
     rows: BookRowData[];
 }
 
-function ScrollRowSection({ title, books, showRank }: BookRowData) {
+function ScrollRowSection({ title, books, showRank, isSearch }: BookRowData) {
     const { ref, isDragging, handlers } = useDraggableScroll();
 
     // Reset horizontal scroll when books change
@@ -32,6 +33,31 @@ function ScrollRowSection({ title, books, showRank }: BookRowData) {
         ref.current.scrollBy({ left: amount, behavior: 'smooth' });
     };
 
+    // 검색 모드: 바둑판 형식
+    if (isSearch) {
+        return (
+            <section className={styles.rowSection}>
+                <h2 className={styles.rowTitle}>{title}</h2>
+                <div className={styles.gridContainer}>
+                    {books.length > 0 ? (
+                        books.map((book, idx) => (
+                            <div key={`${book.itemId}-${idx}`} style={{ width: '100%' }}>
+                                <BookCard
+                                    book={book}
+                                    rank={showRank ? idx + 1 : undefined}
+                                    isInGrid={true}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <div className={styles.emptyState}>No books found.</div>
+                    )}
+                </div>
+            </section>
+        );
+    }
+
+    // 일반 모드: 가로 스크롤
     return (
         <section className={styles.rowSection}>
             <h2 className={styles.rowTitle}>{title}</h2>
@@ -88,6 +114,7 @@ export default function BookRows({ rows }: BookRowsProps) {
                     title={row.title}
                     books={row.books}
                     showRank={row.showRank}
+                    isSearch={row.isSearch}
                 />
             ))}
         </div>

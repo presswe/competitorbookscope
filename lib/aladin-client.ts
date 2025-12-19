@@ -46,12 +46,38 @@ export async function fetchCompetitorsBooks(mode: "New" | "Best"): Promise<Aladi
 
         try {
             console.log(`Fetching ${mode} for ${pub}: ${url}`);
-            const res = await fetch(url, { cache: 'no-store' });
+            // 타임아웃 추가 (10초)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            
+            const res = await fetch(url, { 
+                cache: 'no-store',
+                signal: controller.signal 
+            });
+            
+            clearTimeout(timeoutId);
+            
             if (!res.ok) return [];
             const data = await res.json() as AladinResponse;
-            return data.item || [];
+            let items = data.item || [];
+            
+            // 출판사 필터링: 정확히 일치하는 출판사만
+            if (items.length > 0) {
+                items = items.filter(book => {
+                    const bookPublisher = book.publisher?.trim() || '';
+                    return bookPublisher.toLowerCase() === pub.toLowerCase() ||
+                           bookPublisher.includes(pub) ||
+                           pub.includes(bookPublisher);
+                });
+            }
+            
+            return items;
         } catch (e) {
-            console.error(`Failed to fetch for ${pub}`, e);
+            if (e instanceof Error && e.name === 'AbortError') {
+                console.error(`Timeout for ${pub}`);
+            } else {
+                console.error(`Failed to fetch for ${pub}`, e);
+            }
             return [];
         }
     });
@@ -342,6 +368,7 @@ export async function fetchBooks(
         params.append("QueryType", queryType === "Publisher" ? "Publisher" : "Keyword"); // Use Publisher search if intended
         params.append("Sort", sort);
     } else {
+        
         // List Mode (Generic)
         endpoint = "ItemList.aspx";
         params.append("QueryType", queryType); // e.g. ItemNewAll, Bestseller
@@ -351,15 +378,43 @@ export async function fetchBooks(
     console.log(`[fetchBooks] Calling: ${url}`); // Keep debug
 
     try {
-        const res = await fetch(url, { cache: 'no-store' });
+        // 타임아웃 추가 (10초)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const res = await fetch(url, { 
+            cache: 'no-store',
+            signal: controller.signal 
+        });
+        
+        clearTimeout(timeoutId);
+        
         if (!res.ok) {
             console.error(`Aladin API Error: ${res.status}`);
             return [];
         }
         const data = await res.json() as AladinResponse;
-        return data.item || [];
+        let items = data.item || [];
+        
+        // 출판사 필터링: Publisher 모드일 때 정확히 필터링
+        if (publisher && queryType === "Publisher") {
+            items = items.filter(book => {
+                const bookPublisher = book.publisher?.trim() || '';
+                const targetPublisher = publisher.trim();
+                // 정확히 일치하거나 포함 관계 확인 (대소문자 무시)
+                return bookPublisher.toLowerCase() === targetPublisher.toLowerCase() ||
+                       bookPublisher.includes(targetPublisher) ||
+                       targetPublisher.includes(bookPublisher);
+            });
+        }
+        
+        return items;
     } catch (error) {
-        console.error("Fetch Error:", error);
+        if (error instanceof Error && error.name === 'AbortError') {
+            console.error("Fetch Timeout: API 호출이 10초를 초과했습니다.");
+        } else {
+            console.error("Fetch Error:", error);
+        }
         return [];
     }
 }
