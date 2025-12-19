@@ -1,4 +1,5 @@
 export const COMPETITORS = [
+    "NE능률",
     "비상교육",
     "동아출판",
     "미래엔",
