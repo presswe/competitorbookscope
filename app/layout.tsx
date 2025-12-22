@@ -4,7 +4,7 @@ import "./globals.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Competitor Book Tracker",
+  title: "Competitor Book Scope",
   description: "Internal dashboard for monitoring competitor releases",
 };
 
