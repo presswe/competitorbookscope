@@ -50,7 +50,7 @@
     background: var(--secondary);
     /* Grey or different state when open? Or keep purple and just rotate icon? User asked for - */
     /* Let's keep it primary but maybe rotate? Or just the icon change is enough */
-    transform: rotate(90deg);
+    transform: rotate(180deg);
     animation: none;
     /* Optional rotation effect */
 }
