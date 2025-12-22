@@ -318,103 +318,133 @@ export async function fetchBooks(
     queryType: QueryType = "ItemNewAll",
     searchTarget: "Book" | "Foreign" = "Book",
     publisher: string = "",
-    maxResults: number = 10,
+    maxResults: number = 15,
     start: number = 1,
     sort: "PublishTime" | "SalesPoint" | "Accuracy" = "Accuracy",
     categoryId?: number
 ): Promise<AladinBook[]> {
     const apiKey = process.env.ALADIN_API_KEY;
     if (!apiKey) {
-        console.warn("ALADIN_API_KEY is not set. Using MOCK data.");
-        await new Promise(resolve => setTimeout(resolve, 500));
-        let results = [...MOCK_BOOKS];
-        if (publisher) {
-            results = results.filter(b => b.publisher.includes(publisher));
-        }
-        if (queryType === "Keyword" && publisher) {
-            const query = publisher;
-            results = results.filter(b =>
-                b.title.includes(query) || b.author.includes(query) || b.publisher.includes(query)
-            );
-        }
-        return Promise.resolve(results);
+        console.warn("ALADIN_API_KEY is not set.");
+        return [];
     }
 
-    // Determine correct endpoint and params
-    // If we have a 'query' (publisher or keyword), we MUST use ItemSearch.
-    // If no query (generic lists like ItemNewAll or Bestseller), we use ItemList (mostly).
-
-    // However, to filter by Publisher, we must use ItemSearch with Query=PublisherName.
-
-    let endpoint = "ItemList.aspx"; // Default
-    let params = new URLSearchParams({
+    /* ----------------------------------
+       1. API 기본 설정
+    ---------------------------------- */
+    let endpoint = "ItemList.aspx";
+    const baseParams = new URLSearchParams({
         ttbkey: apiKey,
-        MaxResults: maxResults.toString(),
-        start: start.toString(),
         SearchTarget: searchTarget,
         Output: "js",
         Version: "20131101",
         Cover: "Big",
+        Sort: sort,
     });
 
     if (categoryId) {
-        params.append("CategoryId", categoryId.toString());
+        baseParams.append("CategoryId", categoryId.toString());
     }
 
     if (publisher || queryType === "Keyword" || queryType === "Publisher") {
-        // Search Mode
         endpoint = "ItemSearch.aspx";
-        params.append("Query", publisher); // publisher acts as the query term
-        params.append("QueryType", queryType === "Publisher" ? "Publisher" : "Keyword"); // Use Publisher search if intended
-        params.append("Sort", sort);
+        baseParams.append("Query", publisher);
+        baseParams.append(
+            "QueryType",
+            queryType === "Publisher" ? "Publisher" : "Keyword"
+        );
     } else {
-        
-        // List Mode (Generic)
-        endpoint = "ItemList.aspx";
-        params.append("QueryType", queryType); // e.g. ItemNewAll, Bestseller
+        baseParams.append("QueryType", queryType);
     }
 
-    const url = `${ALADIN_API_BASE}/${endpoint}?${params.toString()}`;
-    console.log(`[fetchBooks] Calling: ${url}`); // Keep debug
+    /* ----------------------------------
+       2. 여러 페이지에서 수집
+    ---------------------------------- */
+    const TARGET_COUNT = maxResults; // 15
+    const PAGE_SIZE = 20;            // 한 번에 넉넉히
+    const MAX_PAGES = 5;             // 안전장치
 
-    try {
-        // 타임아웃 추가 (10초)
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-        
-        const res = await fetch(url, { 
-            cache: 'no-store',
-            signal: controller.signal 
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!res.ok) {
-            console.error(`Aladin API Error: ${res.status}`);
-            return [];
-        }
-        const data = await res.json() as AladinResponse;
-        let items = data.item || [];
-        
-        // 출판사 필터링: Publisher 모드일 때 정확히 필터링
-        if (publisher && queryType === "Publisher") {
-            items = items.filter(book => {
-                const bookPublisher = book.publisher?.trim() || '';
-                const targetPublisher = publisher.trim();
-                // 정확히 일치하거나 포함 관계 확인 (대소문자 무시)
-                return bookPublisher.toLowerCase() === targetPublisher.toLowerCase() ||
-                       bookPublisher.includes(targetPublisher) ||
-                       targetPublisher.includes(bookPublisher);
+    let collected: AladinBook[] = [];
+    let currentStart = start;
+    let page = 0;
+
+    while (collected.length < TARGET_COUNT && page < MAX_PAGES) {
+        const params = new URLSearchParams(baseParams);
+        params.set("start", currentStart.toString());
+        params.set("MaxResults", PAGE_SIZE.toString());
+
+        const url = `${ALADIN_API_BASE}/${endpoint}?${params.toString()}`;
+        console.log("[fetchBooks]", url);
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const res = await fetch(url, {
+                cache: "no-store",
+                signal: controller.signal,
             });
+
+            clearTimeout(timeoutId);
+
+            if (!res.ok) break;
+
+            const data = (await res.json()) as AladinResponse;
+            let items = data.item || [];
+
+            /* ----------------------------------
+               3. 썸네일 필터
+            ---------------------------------- */
+            items = items.filter(hasValidThumbnail);
+
+            /* ----------------------------------
+               4. 출판사 필터 (보정)
+            ---------------------------------- */
+            if (publisher && queryType === "Publisher") {
+                items = items.filter(book => {
+                    const bookPublisher = book.publisher?.trim() || "";
+                    const targetPublisher = publisher.trim();
+
+                    return (
+                        bookPublisher.toLowerCase() === targetPublisher.toLowerCase() ||
+                        bookPublisher.includes(targetPublisher) ||
+                        targetPublisher.includes(bookPublisher)
+                    );
+                });
+            }
+
+            collected.push(...items);
+
+            currentStart += PAGE_SIZE;
+            page++;
+        } catch (e) {
+            console.error("Fetch error:", e);
+            break;
         }
-        
-        return items;
-    } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-            console.error("Fetch Timeout: API 호출이 10초를 초과했습니다.");
-        } else {
-            console.error("Fetch Error:", error);
-        }
-        return [];
     }
+
+    /* ----------------------------------
+       5. 최종 개수 맞추기
+    ---------------------------------- */
+    return collected.slice(0, TARGET_COUNT);
+}
+
+/* ----------------------------------
+   썸네일 유효성 체크
+---------------------------------- */
+function hasValidThumbnail(book: AladinBook): boolean {
+    const cover = book.cover;
+    if (!cover) return false;
+
+    const invalidPatterns = [
+        "none",
+        "noimage",
+        "noimg",
+        "img_no",
+        "cover없음",
+    ];
+
+    return !invalidPatterns.some(p =>
+        cover.toLowerCase().includes(p)
+    );
 }
