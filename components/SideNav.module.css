@@ -26,22 +26,25 @@
     transition: all 0.3s ease;
     z-index: 20;
     font-family: system-ui, -apple-system, sans-serif;
-    animation: heartbeat 1.8s ease-in-out infinite;
+    animation: heartbeat 1.5s ease-in-out infinite;
+  
     /* Standard font for nice +/- */
 }
+
 
 .toggleIcon {
     font-size: 50px;
     font-weight: 300;
     /* Thin sleek look */
     line-height: 1;
-    margin-top: -7px;
+    margin-top: -9px;
     /* Optical centering for fonts */
 }
 
 .lampButton:hover {
-    transform: scale(1.1);
+    transform: scale(1.0);
     background: var(--primary);
+    transform: rotate(90deg);
     animation: none;
     /* Keep purple */
 }
@@ -196,9 +199,10 @@
 
 @keyframes heartbeat {
     0%   { transform: scale(1); }
-    14%  { transform: scale(1.1); }
+    14%  { transform: scale(1.05); }
     28%  { transform: scale(1); }
-    42%  { transform: scale(1.15); }
+    42%  { transform: scale(1.1); }
     70%  { transform: scale(1); }
     100% { transform: scale(1); }
   }
+  
