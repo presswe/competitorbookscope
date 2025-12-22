@@ -30,9 +30,9 @@ export default async function Home({ searchParams }: HomeProps) {
   } else if (publisher) {
     // 2. Specific Publisher Mode -> Split by School Level
     const [elem, mid, high] = await Promise.all([
-      fetchBooks('Publisher', 'Book', publisher, 15, 1, 'PublishTime', 50246),
-      fetchBooks('Publisher', 'Book', publisher, 15, 1, 'PublishTime', 76000),
-      fetchBooks('Publisher', 'Book', publisher, 15, 1, 'PublishTime', 76001)
+      fetchBooks('Publisher', 'Book', publisher, 20, 1, 'PublishTime', 50246),
+      fetchBooks('Publisher', 'Book', publisher, 20, 1, 'PublishTime', 76000),
+      fetchBooks('Publisher', 'Book', publisher, 20, 1, 'PublishTime', 76001)
     ]);
     rows = [
       { title: "초등 참고서 NEW", books: elem },
@@ -44,9 +44,9 @@ export default async function Home({ searchParams }: HomeProps) {
     // 타임아웃 방지를 위해 순차적으로 호출하거나 Promise.allSettled 사용
     const [elemNew, midNew, highNew, elemBest, midBest, highBest] = await Promise.allSettled([
       // New Releases for each level
-      fetchBooks('ItemNewAll', 'Book', '', 15, 1, 'PublishTime', 50246),
-      fetchBooks('ItemNewAll', 'Book', '', 15, 1, 'PublishTime', 76000),
-      fetchBooks('ItemNewAll', 'Book', '', 15, 1, 'PublishTime', 76001),
+      fetchBooks('ItemNewAll', 'Book', '', 20, 1, 'PublishTime', 50246),
+      fetchBooks('ItemNewAll', 'Book', '', 20, 1, 'PublishTime', 76000),
+      fetchBooks('ItemNewAll', 'Book', '', 20, 1, 'PublishTime', 76001),
       // Weekly Best 10 for each level
       fetchBooks('Bestseller', 'Book', '', 10, 1, 'SalesPoint', 50246),
       fetchBooks('Bestseller', 'Book', '', 10, 1, 'SalesPoint', 76000),
