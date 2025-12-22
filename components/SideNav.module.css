@@ -26,8 +26,7 @@
     transition: all 0.3s ease;
     z-index: 20;
     font-family: system-ui, -apple-system, sans-serif;
-    animation: heartbeat 1.5s ease-in-out infinite;
-  
+    animation: heartbeat 1.8s ease-in-out infinite;
     /* Standard font for nice +/- */
 }
 
@@ -43,6 +42,7 @@
 .lampButton:hover {
     transform: scale(1.1);
     background: var(--primary);
+    animation: none;
     /* Keep purple */
 }
 
@@ -51,7 +51,6 @@
     /* Grey or different state when open? Or keep purple and just rotate icon? User asked for - */
     /* Let's keep it primary but maybe rotate? Or just the icon change is enough */
     transform: rotate(90deg);
-    animation: stop;
     /* Optional rotation effect */
 }
 
@@ -196,13 +195,9 @@
 
 @keyframes heartbeat {
     0%   { transform: scale(1); }
-    14%  { transform: scale(1.15); }
+    14%  { transform: scale(1.1); }
     28%  { transform: scale(1); }
     42%  { transform: scale(1.15); }
     70%  { transform: scale(1); }
     100% { transform: scale(1); }
-  }
-  
-  .heartbeat {
-    animation: heartbeat 1.5s ease-in-out infinite;
   }
